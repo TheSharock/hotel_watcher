@@ -4,7 +4,7 @@ on:
   schedule:
     # Once a day at 15:00 UTC (~7-8 AM Pacific). Times are UTC — adjust as you like.
     # cron is minute hour day month weekday.
-    - cron: "0 15 * * *"
+    - cron: "0 */6 * * *"
   workflow_dispatch: {}   # lets you run it on demand from the Actions tab
 
 # Allow the job to commit the refreshed rates.json back to the repo.
