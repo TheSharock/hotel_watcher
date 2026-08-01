@@ -1,0 +1,18 @@
+# Debug output from the rate checker (only written when DEBUG_DUMP = True)
+rates_raw.json
+
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment (if you run the checker from inside the project folder)
+.venv/
+venv/
+
+# Local editor / OS cruft
+.vscode/
+.DS_Store
+Thumbs.db
+
+# NOTE: docs/rates.json is intentionally NOT ignored — it must be committed,
+# it's what feeds the dashboard.

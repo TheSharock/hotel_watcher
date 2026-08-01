@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Venetian Rate Watch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E1320; --surface:#161C2B; --raised:#1E2537; --hair:rgba(216,178,74,.14);
+    --gold:#D8B24A; --gold-dim:#8f7a3f; --green:#46D19A; --red:#E76F51;
+    --text:#ECE7DB; --muted:#8A93A9;
+    --serif:"Fraunces",Georgia,serif; --sans:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1200px 500px at 80% -10%, rgba(216,178,74,.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(70,209,154,.06), transparent 55%),
+      var(--ink);
+    color:var(--text); font-family:var(--sans);
+    -webkit-font-smoothing:antialiased; min-height:100vh;
+    padding:28px 20px 40px;
+  }
+  .wrap{max-width:720px;margin:0 auto}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-dim)}
+  h1{font-family:var(--serif);font-weight:500;font-size:34px;line-height:1.05;margin:6px 0 2px;letter-spacing:-.01em}
+  h1 .gold{color:var(--gold)}
+  .sub{color:var(--muted);font-size:13.5px;margin-bottom:22px}
+
+  .card{background:linear-gradient(180deg,var(--surface),rgba(22,28,43,.6));border:1px solid var(--hair);border-radius:16px;padding:22px;margin-bottom:16px}
+
+  /* hero */
+  .hero{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+  .hero-label{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--muted)}
+  .delta{font-family:var(--mono);font-weight:600;font-size:64px;line-height:.9;letter-spacing:-.02em}
+  .delta.save{color:var(--green)} .delta.hold{color:var(--text)} .delta.over{color:var(--red)}
+  .flow{font-family:var(--mono);font-size:14px;color:var(--muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .flow b{color:var(--text);font-weight:500}
+  .arrow{color:var(--gold)}
+  .pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:7px 12px;border-radius:999px;border:1px solid}
+  .pill.save{color:var(--green);border-color:rgba(70,209,154,.4);background:rgba(70,209,154,.08)}
+  .pill.hold{color:var(--muted);border-color:var(--hair)}
+  .pill.over{color:var(--red);border-color:rgba(231,111,81,.4);background:rgba(231,111,81,.08)}
+  .dot{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor}
+
+  /* locked row */
+  .assume{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:flex-end}
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field label{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .field .inp{display:flex;align-items:center;background:var(--raised);border:1px solid var(--hair);border-radius:10px;padding:0 4px 0 11px}
+  .field .inp .cur{color:var(--gold-dim);font-family:var(--mono);font-size:14px}
+  input[type=number]{background:transparent;border:0;color:var(--text);font-family:var(--mono);font-size:16px;width:92px;padding:10px 6px;outline:none}
+  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input[type=number]{-moz-appearance:textfield}
+  .cap{font-size:11.5px;color:var(--muted);line-height:1.5}
+
+  /* nights */
+  .nights{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .night{background:var(--raised);border:1px solid var(--hair);border-radius:12px;padding:14px;position:relative;overflow:hidden}
+  .night::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--gold-dim);opacity:.5}
+  .night.save::before{background:var(--green);opacity:1}
+  .night.over::before{background:var(--red);opacity:.9}
+  .night .dow{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dim)}
+  .night .day{font-family:var(--serif);font-size:19px;margin:1px 0 10px}
+  .night .row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px;margin-top:3px}
+  .night .row span:first-child{color:var(--muted)}
+  .night .now{color:var(--text)} .night .d.save{color:var(--green)} .night .d.over{color:var(--red)} .night .d.hold{color:var(--muted)}
+
+  /* log form */
+  .loghead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;flex-wrap:wrap;gap:6px}
+  .loghead h3{font-family:var(--serif);font-weight:500;font-size:18px;margin:0}
+  .checked{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .logrow{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:10px;align-items:end}
+  .logrow .field .inp{padding:0 4px 0 9px}
+  .logrow input{width:100%}
+  .btn{font-family:var(--mono);font-size:12px;letter-spacing:.06em;border-radius:10px;padding:12px 16px;border:1px solid var(--gold);background:var(--gold);color:#1a1508;font-weight:600;cursor:pointer;white-space:nowrap;transition:transform .08s ease,filter .15s ease}
+  .btn:hover{filter:brightness(1.08)} .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent;color:var(--gold);border-color:var(--hair)}
+  .btn.ghost:hover{border-color:var(--gold)}
+
+  /* spark */
+  .spark-wrap{margin-top:20px}
+  .spark-wrap .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  svg.spark{width:100%;height:96px;display:block}
+  .empty{font-size:12.5px;color:var(--muted);font-style:italic;padding:22px 0;text-align:center}
+
+  .links{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .foot{font-size:11.5px;color:var(--muted);line-height:1.65;margin-top:8px}
+  .foot b{color:var(--gold-dim);font-weight:600}
+  .reset{background:none;border:0;color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;margin-top:14px}
+  .reset:hover{color:var(--red)}
+  @media(max-width:560px){
+    .delta{font-size:52px}
+    .logrow{grid-template-columns:repeat(3,1fr)}
+    .logrow .btn{grid-column:1/-1}
+    h1{font-size:28px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Rate watch · price-lock monitor</div>
+  <h1><span class="gold">The Venetian</span> · Las Vegas</h1>
+  <div class="sub" id="staySub">Three nights — Aug 19–21, 2026</div>
+
+  <!-- HERO -->
+  <div class="card hero">
+    <div class="hero-label" id="heroLabel">Set your locked rate to begin</div>
+    <div class="delta hold" id="delta">—</div>
+    <div class="flow">
+      <span>Locked <b id="lockedTotal">—</b></span>
+      <span class="arrow">→</span>
+      <span>Now <b id="currentTotal">—</b></span>
+      <span id="nightsCount" style="color:var(--gold-dim)"></span>
+    </div>
+    <div id="statusPill" class="pill hold"><span class="dot"></span><span id="pillText">Awaiting rates</span></div>
+  </div>
+
+  <!-- ASSUMPTIONS -->
+  <div class="card">
+    <div class="assume">
+      <div class="field">
+        <label>Locked rate / night</label>
+        <div class="inp"><span class="cur">$</span><input type="number" id="lockedPerNight" min="0" step="1" placeholder="380"></div>
+      </div>
+      <div class="field">
+        <label>Resort fee / night</label>
+        <div class="inp"><span class="cur">$</span><input type="number" id="resortFee" min="0" step="1" placeholder="0"></div>
+      </div>
+      <div class="cap" style="flex:1;min-width:180px">
+        Enter the nightly rate your lock is pegged to. Resort fee is optional — some price-match
+        rules count it, some don't, so keep both booking screens comparing the same way.
+      </div>
+    </div>
+  </div>
+
+  <!-- NIGHTS -->
+  <div class="card">
+    <div class="nights" id="nights"></div>
+  </div>
+
+  <!-- LOG -->
+  <div class="card">
+    <div class="loghead">
+      <h3>Log today's rates</h3>
+      <div class="checked" id="lastChecked">Never checked</div>
+    </div>
+    <div id="feedNote" class="cap" style="margin:-6px 0 14px"></div>
+    <div class="logrow" id="logRow"></div>
+
+    <div class="spark-wrap">
+      <div class="lbl">Total rate over time</div>
+      <div id="sparkHost"></div>
+    </div>
+
+    <div class="links">
+      <a class="btn ghost" id="lnkVen" target="_blank" rel="noopener">Check on Venetian ↗</a>
+      <a class="btn ghost" id="lnkGoogle" target="_blank" rel="noopener">Google Hotels ↗</a>
+    </div>
+    <div class="foot">
+      <b>How updating works:</b> this dashboard can't silently scrape live Venetian prices —
+      booking sites block that. So: click a check link, glance at the rate for these dates,
+      type it in, and hit save. Each save is timestamped and charted. Want it hands-off?
+      Forward your confirmation to a free monitor (Hotel Hops, Rebookey) and just log the number
+      when they email you a drop. Rebooking cheaper only works if your rate is refundable.
+    </div>
+    <button class="reset" id="resetBtn">Reset all saved data</button>
+  </div>
+</div>
+
+<script>
+const KEY="venetian-watch:v1";
+const NIGHTS=[
+  {id:"n19", date:new Date(2026,7,19)},
+  {id:"n20", date:new Date(2026,7,20)},
+  {id:"n21", date:new Date(2026,7,21)},
+];
+const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+let state={ lockedPerNight:null, resortFee:0, current:{}, history:[], lastChecked:null };
+
+const hasClaudeStore = typeof window!=="undefined" && window.storage && window.storage.get;
+async function load(){
+  try{
+    if(hasClaudeStore){ const r=await window.storage.get(KEY); if(r&&r.value){ state=Object.assign(state,JSON.parse(r.value)); } }
+    else { const raw=localStorage.getItem(KEY); if(raw){ state=Object.assign(state,JSON.parse(raw)); } }
+  }catch(e){ /* first run / private mode */ }
+}
+async function save(){
+  try{
+    if(hasClaudeStore){ await window.storage.set(KEY, JSON.stringify(state)); }
+    else { localStorage.setItem(KEY, JSON.stringify(state)); }
+  }catch(e){ console.warn("save failed",e); }
+}
+
+const money=n=> (n==null||isNaN(n))?"—":"$"+Number(n).toLocaleString(undefined,{maximumFractionDigits:0});
+const lockedNight=()=> (Number(state.lockedPerNight)||0)+(Number(state.resortFee)||0);
+function currentNight(id){
+  const c=state.current[id];
+  if(c==null||c==="") return null;
+  return Number(c)+(Number(state.resortFee)||0);
+}
+function lockedTotal(){ return state.lockedPerNight? lockedNight()*NIGHTS.length : null; }
+function currentTotal(){
+  let any=false,sum=0;
+  for(const n of NIGHTS){ const v=currentNight(n.id); if(v!=null){any=true; sum+=v;} else if(state.lockedPerNight){ sum+=lockedNight(); } }
+  return any? sum : null;
+}
+
+function render(){
+  document.getElementById("lockedPerNight").value = state.lockedPerNight ?? "";
+  document.getElementById("resortFee").value = state.resortFee || "";
+
+  const lt=lockedTotal(), ct=currentTotal();
+  document.getElementById("lockedTotal").textContent=money(lt);
+  document.getElementById("currentTotal").textContent=money(ct);
+  document.getElementById("nightsCount").textContent="· "+NIGHTS.length+" nights";
+
+  const delEl=document.getElementById("delta"), heroLabel=document.getElementById("heroLabel");
+  const pill=document.getElementById("statusPill"), pillText=document.getElementById("pillText");
+  if(lt!=null && ct!=null){
+    const d=lt-ct; // positive = savings
+    if(d>0){ delEl.textContent="−"+money(d).slice(1); delEl.className="delta save"; heroLabel.textContent="You can save"; pill.className="pill save"; pillText.textContent="Rebook now"; }
+    else if(d<0){ delEl.textContent="+"+money(-d).slice(1); delEl.className="delta over"; heroLabel.textContent="Current rate is higher"; pill.className="pill over"; pillText.textContent="Hold your lock"; }
+    else{ delEl.textContent="$0"; delEl.className="delta hold"; heroLabel.textContent="Right where you locked"; pill.className="pill hold"; pillText.textContent="No change"; }
+  } else {
+    delEl.textContent="—"; delEl.className="delta hold";
+    heroLabel.textContent= state.lockedPerNight? "Log a rate check to see your delta":"Set your locked rate to begin";
+    pill.className="pill hold"; pillText.textContent="Awaiting rates";
+  }
+
+  // nights
+  const host=document.getElementById("nights"); host.innerHTML="";
+  for(const n of NIGHTS){
+    const cn=currentNight(n.id), ln=state.lockedPerNight? lockedNight():null;
+    let cls="", dtxt="—", dcls="hold";
+    if(cn!=null && ln!=null){ const d=ln-cn; if(d>0){cls="save";dcls="save";dtxt="−"+money(d).slice(1);} else if(d<0){cls="over";dcls="over";dtxt="+"+money(-d).slice(1);} else {dtxt="$0";} }
+    const el=document.createElement("div"); el.className="night "+cls;
+    el.innerHTML=`
+      <div class="dow">${DOW[n.date.getDay()]}</div>
+      <div class="day">${MON[n.date.getMonth()]} ${n.date.getDate()}</div>
+      <div class="row"><span>Locked</span><span>${money(ln)}</span></div>
+      <div class="row"><span>Now</span><span class="now">${money(cn)}</span></div>
+      <div class="row"><span>Δ</span><span class="d ${dcls}">${dtxt}</span></div>`;
+    host.appendChild(el);
+  }
+
+  // log row inputs
+  const lr=document.getElementById("logRow"); lr.innerHTML="";
+  for(const n of NIGHTS){
+    const f=document.createElement("div"); f.className="field";
+    f.innerHTML=`<label>${DOW[n.date.getDay()]} ${n.date.getDate()}</label>
+      <div class="inp"><span class="cur">$</span><input type="number" min="0" step="1" data-night="${n.id}" placeholder="rate"></div>`;
+    lr.appendChild(f);
+  }
+  const btn=document.createElement("button"); btn.className="btn"; btn.textContent="Save check";
+  btn.onclick=saveCheck; lr.appendChild(btn);
+
+  document.getElementById("lastChecked").textContent = state.lastChecked? ("Last checked "+fmtWhen(state.lastChecked)) : "Never checked";
+  drawSpark();
+}
+
+function fmtWhen(ts){
+  const d=new Date(ts), now=new Date();
+  const same=d.toDateString()===now.toDateString();
+  const t=d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+  return same? ("today "+t) : (MON[d.getMonth()]+" "+d.getDate()+", "+t);
+}
+
+function saveCheck(){
+  const inputs=document.querySelectorAll('#logRow input[data-night]');
+  let touched=false;
+  inputs.forEach(i=>{ if(i.value!==""){ state.current[i.dataset.night]=Number(i.value); touched=true; } });
+  if(!touched){ // if nothing typed, still snapshot current known totals
+  }
+  const ct=currentTotal();
+  if(ct!=null){
+    state.history.push({ts:Date.now(), total:ct});
+    if(state.history.length>60) state.history=state.history.slice(-60);
+  }
+  state.lastChecked=Date.now();
+  inputs.forEach(i=>i.value="");
+  save(); render();
+}
+
+function drawSpark(){
+  const host=document.getElementById("sparkHost");
+  const h=state.history;
+  const lt=lockedTotal();
+  if(!h || h.length<2){
+    host.innerHTML='<div class="empty">Save at least two checks to see the trend line.</div>';
+    return;
+  }
+  const W=680,H=96,pad=8;
+  const vals=h.map(p=>p.total);
+  let min=Math.min(...vals, lt!=null?lt:Infinity), max=Math.max(...vals, lt!=null?lt:-Infinity);
+  if(min===max){min-=10;max+=10;}
+  const rng=max-min;
+  const x=i=> pad + (i/(h.length-1))*(W-2*pad);
+  const y=v=> pad + (1-(v-min)/rng)*(H-2*pad);
+  const pts=h.map((p,i)=>x(i)+","+y(p.total)).join(" ");
+  const last=h[h.length-1].total;
+  const lastBelow = lt!=null && last<lt;
+  const stroke=lastBelow?"var(--green)":"var(--gold)";
+  let lockLine="";
+  if(lt!=null && lt>=min && lt<=max){
+    const ly=y(lt);
+    lockLine=`<line x1="${pad}" y1="${ly}" x2="${W-pad}" y2="${ly}" stroke="var(--red)" stroke-dasharray="4 4" stroke-width="1" opacity=".6"/>
+      <text x="${W-pad}" y="${ly-5}" fill="var(--red)" font-family="IBM Plex Mono" font-size="10" text-anchor="end" opacity=".8">locked ${money(lt)}</text>`;
+  }
+  host.innerHTML=`<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    ${lockLine}
+    <polyline points="${pts}" fill="none" stroke="${stroke}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    ${h.map((p,i)=>`<circle cx="${x(i)}" cy="${y(p.total)}" r="${i===h.length-1?3.5:2.2}" fill="${stroke}"/>`).join("")}
+  </svg>`;
+}
+
+// input bindings
+document.getElementById("lockedPerNight").addEventListener("input",e=>{ state.lockedPerNight=e.target.value===""?null:Number(e.target.value); save(); render(); });
+document.getElementById("resortFee").addEventListener("input",e=>{ state.resortFee=e.target.value===""?0:Number(e.target.value); save(); render(); });
+document.getElementById("resetBtn").addEventListener("click",async()=>{
+  if(!confirm("Clear your locked rate, logged rates, and history?")) return;
+  state={ lockedPerNight:null, resortFee:0, current:{}, history:[], lastChecked:null };
+  try{ if(hasClaudeStore){ await window.storage.delete(KEY); } else { localStorage.removeItem(KEY); } }catch(e){}
+  render();
+});
+
+// quick-check links
+const venURL="https://www.venetianlasvegas.com/";
+const gURL="https://www.google.com/travel/search?q="+encodeURIComponent("The Venetian Las Vegas hotel Aug 19 2026");
+document.getElementById("lnkVen").href=venURL;
+document.getElementById("lnkGoogle").href=gURL;
+
+// ---- auto-feed: read rates.json written by the Python script (same folder) ----
+function isoOf(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function setFeedNote(mode, stamp){
+  const el=document.getElementById("feedNote");
+  if(mode==="live"){ el.innerHTML='<span style="color:var(--green)">● Auto-fed</span> — rates loaded from the script'+(stamp?' · updated '+stamp:'')+'. You can still override any night below.'; }
+  else { el.innerHTML='Manual mode — no rates.json found. Type rates in below, or run the script to feed them automatically.'; }
+}
+async function tryAutoFeed(){
+  try{
+    const res=await fetch("rates.json",{cache:"no-store"});
+    if(!res.ok) throw new Error("no file");
+    const data=await res.json();
+    if(!data || !data.nights) throw new Error("bad shape");
+    let changed=false;
+    for(const n of NIGHTS){
+      const key=isoOf(n.date), v=data.nights[key];
+      if(v!=null && state.current[n.id]!==Number(v)){ state.current[n.id]=Number(v); changed=true; }
+    }
+    const stamp=data.updated || null;
+    if(stamp && state.lastFeedStamp!==stamp){
+      state.lastFeedStamp=stamp;
+      const ct=currentTotal();
+      if(ct!=null){ state.history.push({ts:Date.parse(stamp)||Date.now(), total:ct}); if(state.history.length>60) state.history=state.history.slice(-60); }
+      state.lastChecked=Date.parse(stamp)||Date.now();
+      changed=true;
+    }
+    if(changed) await save();
+    render();
+    setFeedNote("live", stamp);
+  }catch(e){ setFeedNote("manual"); }
+}
+
+(async()=>{ await load(); render(); await tryAutoFeed(); })();
+</script>
+</body>
+</html>
