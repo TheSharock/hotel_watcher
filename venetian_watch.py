@@ -21,7 +21,7 @@ import requests
 
 # ------------------------------- CONFIG --------------------------------------
 HOTEL       = "The Venetian, Las Vegas"
-NIGHTS      = ["2026-08-19", "2026-08-20", "2026-08-21"]   # the nights you care about
+NIGHTS      = ["2026-08-19"]   # the nights you care about
 LOCKED_RATE = 380.0          # per night; alert is emphasized when a night drops below this
 # In GitHub Actions this comes from a repo secret; locally it uses the fallback.
 NTFY_TOPIC  = os.environ.get("NTFY_TOPIC", "venetian-rate-CHANGE-ME-a7x93q")
