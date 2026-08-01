@@ -105,7 +105,7 @@
 <div class="wrap">
   <div class="eyebrow">Rate watch · price-lock monitor</div>
   <h1><span class="gold">The Venetian</span> · Las Vegas</h1>
-  <div class="sub" id="staySub">Three nights — Aug 19–21, 2026</div>
+  <div class="sub" id="staySub">Aug 19, 2026</div>
 
   <!-- HERO -->
   <div class="card hero">
@@ -175,9 +175,7 @@
 <script>
 const KEY="venetian-watch:v1";
 const NIGHTS=[
-  {id:"n19", date:new Date(2026,7,19)},
-  {id:"n20", date:new Date(2026,7,20)},
-  {id:"n21", date:new Date(2026,7,21)},
+  {id:"n19", date:new Date(2026,7,19)}
 ];
 const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -332,9 +330,8 @@ document.getElementById("resetBtn").addEventListener("click",async()=>{
 
 // quick-check links
 const venURL="https://www.venetianlasvegas.com/";
-const gURL="https://www.google.com/travel/search?q="+encodeURIComponent("The Venetian Las Vegas hotel Aug 19 2026");
 document.getElementById("lnkVen").href=venURL;
-document.getElementById("lnkGoogle").href=gURL;
+
 
 // ---- auto-feed: read rates.json written by the Python script (same folder) ----
 function isoOf(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
